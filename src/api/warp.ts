@@ -30,7 +30,7 @@ export async function fetchWarpAccounts(env: Env): Promise<WarpAccount[]> {
             if (index === 0) await new Promise(resolve => setTimeout(resolve, 2000));
         }
 
-        await env.sb.put('warpAccounts', JSON.stringify(warpAccounts));
+        await env.kv.put('warpAccounts', JSON.stringify(warpAccounts));
         return warpAccounts;
 
     } catch (error) {

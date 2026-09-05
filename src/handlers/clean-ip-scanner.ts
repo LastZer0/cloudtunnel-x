@@ -103,7 +103,7 @@ async function scanAndApplyCleanIPs(env: Env, force: boolean) {
         cleanIpScanResults: best
     };
 
-    await env.sb.put('proxySettings', JSON.stringify(updatedSettings));
+    await env.kv.put('proxySettings', JSON.stringify(updatedSettings));
 
     const successState = buildScannerState(now, intervalHours, best, `Updated Clean IPs with ${best.length} healthy candidates.`);
     await saveScannerState(env, successState);
@@ -138,11 +138,11 @@ function buildScannerState(now: number, intervalHours: number, results: ScanResu
 }
 
 async function getScannerState(env: Env): Promise<ScannerState> {
-    return await env.sb.get(SCANNER_STATE_KEY, { type: 'json' }) || {};
+    return await env.kv.get(SCANNER_STATE_KEY, { type: 'json' }) || {};
 }
 
 async function saveScannerState(env: Env, state: ScannerState): Promise<void> {
-    await env.sb.put(SCANNER_STATE_KEY, JSON.stringify(state));
+    await env.kv.put(SCANNER_STATE_KEY, JSON.stringify(state));
 }
 
 function buildCandidates(seed: number): string[] {

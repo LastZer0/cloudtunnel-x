@@ -3,7 +3,7 @@ import { EmbededSettings } from './settings';
 declare global {
     interface Env {
         readonly CF_PAGES: string;
-        readonly sb: KVNamespace;
+        readonly kv: KVNamespace;
         readonly UUID?: string;
         readonly TR_PASS?: string;
     }

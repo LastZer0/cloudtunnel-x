@@ -14,10 +14,10 @@ export async function getDataset(env: Env): Promise<{
     const kvSettings = getKvSettings();
 
     try {
-        settings = await env.sb.get('proxySettings', { type: 'json' });
-        warpAccounts = await env.sb.get('warpAccounts', { type: 'json' });
+        settings = await env.kv.get('proxySettings', { type: 'json' });
+        warpAccounts = await env.kv.get('warpAccounts', { type: 'json' });
         if (!settings) {
-            await env.sb.put('proxySettings', JSON.stringify(kvSettings));
+            await env.kv.put('proxySettings', JSON.stringify(kvSettings));
             settings = kvSettings;
         }
 
@@ -35,17 +35,17 @@ export async function getDataset(env: Env): Promise<{
                 cleanIpScanResults: settings.cleanIpScanResults ?? kvSettings.cleanIpScanResults,
                 panelVersion: settings.panelVersion || VERSION
             };
-            await env.sb.put('proxySettings', JSON.stringify(settings));
+            await env.kv.put('proxySettings', JSON.stringify(settings));
         }
 
         if (VERSION !== settings.panelVersion) {
             settings = await updateDataset(env);
         }
 
-        let telegramBot: TelegramBot | null = await env.sb.get('telegramBot', { type: 'json' });
+        let telegramBot: TelegramBot | null = await env.kv.get('telegramBot', { type: 'json' });
         if (!telegramBot) {
             telegramBot = { telegramBotToken: '', telegramUserId: '' };
-            await env.sb.put('telegramBot', JSON.stringify(telegramBot));
+            await env.kv.put('telegramBot', JSON.stringify(telegramBot));
         }
 
         return {
@@ -71,7 +71,7 @@ function hasCurrentSettingsShape(settings: Partial<KvSettings>): boolean {
 export async function updateDataset(env: Env, newSettings?: PanelSettings): Promise<KvSettings> {
     if (!newSettings) {
         const kvSettings = getKvSettings();
-        await env.sb.put('proxySettings', JSON.stringify(kvSettings));
+        await env.kv.put('proxySettings', JSON.stringify(kvSettings));
         return kvSettings;
     }
 
@@ -79,7 +79,7 @@ export async function updateDataset(env: Env, newSettings?: PanelSettings): Prom
     const kvSettings = getKvSettings();
 
     try {
-        currentSettings = await env.sb.get('proxySettings', { type: 'json' });
+        currentSettings = await env.kv.get('proxySettings', { type: 'json' });
     } catch (error) {
         console.log(error);
         throw new Error(`An error occurred while getting current KV settings: ${safeError(error)}`);
@@ -200,7 +200,7 @@ export async function updateDataset(env: Env, newSettings?: PanelSettings): Prom
             panelVersion: VERSION
         };
 
-        await env.sb.put('proxySettings', JSON.stringify(updatedSettings));
+        await env.kv.put('proxySettings', JSON.stringify(updatedSettings));
         return updatedSettings;
     } catch (error) {
         console.log(error);
