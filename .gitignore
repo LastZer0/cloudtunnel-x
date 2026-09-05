@@ -1,7 +1,9 @@
 *
 !.gitignore
 !package.json
+!package-lock.json
 !tsconfig.json
+!wrangler.jsonc
 !src/
 !src/**
 !scripts/

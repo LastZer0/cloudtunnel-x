@@ -61,7 +61,7 @@ export async function handlePanel(request: Request, env: Env): Promise<Response>
 }
 
 async function renderPanel(request: Request, env: Env): Promise<Response> {
-    const pwd = await env.kv.get('pwd');
+    const pwd = await env.sb.get('pwd');
     if (pwd) {
         const auth = await authenticate(request, env);
         if (!auth) {
@@ -136,7 +136,7 @@ async function deletePanel(request: Request, env: Env): Promise<Response> {
 }
 
 async function getPanelSettings(request: Request, env: Env): Promise<Response> {
-    const isPassSet = Boolean(await env.kv.get('pwd'));
+    const isPassSet = Boolean(await env.sb.get('pwd'));
 
     try {
         const auth = await authenticate(request, env);
@@ -192,7 +192,7 @@ async function updatePanelSettings(request: Request, env: Env): Promise<Response
 
         const { securePath } = getGlobals();
         if (newSettings.securePath !== securePath) {
-            const bot: TelegramBot | null = await env.kv.get('telegramBot', { type: 'json' });
+            const bot: TelegramBot | null = await env.sb.get('telegramBot', { type: 'json' });
             if (bot) {
                 await setTelegramBot(newSettings.securePath, bot.telegramBotToken);
             }

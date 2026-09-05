@@ -30,7 +30,7 @@ export async function fetchWarpAccounts(env: Env): Promise<WarpAccount[]> {
             if (index === 0) await new Promise(resolve => setTimeout(resolve, 2000));
         }
 
-        await env.kv.put('warpAccounts', JSON.stringify(warpAccounts));
+        await env.sb.put('warpAccounts', JSON.stringify(warpAccounts));
         return warpAccounts;
 
     } catch (error) {
@@ -76,7 +76,7 @@ async function generateKeyPair(): Promise<WarpKeys> {
     });
 
     return {
-        publicKey: publicKey.subarray(-32).toString('base64'),
-        privateKey: privateKey.subarray(-32).toString('base64')
+        publicKey: Buffer.from(publicKey.subarray(-32)).toString('base64'),
+        privateKey: Buffer.from(privateKey.subarray(-32)).toString('base64')
     };
 }
