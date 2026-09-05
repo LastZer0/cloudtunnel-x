@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 
 <head>
     <meta charset="UTF-8">
@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=add_circle,autorenew,cancel,check_circle,clock_loader_40,close,cloud_download,cloud_upload,code_xml,content_copy,dashboard,data_usage,delete,dns,download,draft,error,fingerprint,help,info,key_vertical,keyboard_arrow_down,link,logout,open_in_new,qr_code,refresh,save,settings,settings_backup_restore,share,smart_toy,terminal,tune,upgrade,upload,verified,visibility,visibility_off&display=block" />
@@ -311,6 +311,35 @@
                             </label>
                             <div>
                                 <textarea id="cleanIPs" name="cleanIPs" rows="1"></textarea>
+                            </div>
+                        </div>
+                        <div class="container scanner-panel">
+                            <h4><span class="material-symbols-rounded">autorenew</span> Clean IP Auto Scanner</h4>
+                            <div class="form-control">
+                                <label for="cleanIpAutoScan">Auto Scan</label>
+                                <div class="select-wrapper">
+                                    <select id="cleanIpAutoScan" name="cleanIpAutoScan">
+                                        <option value="true">Enabled</option>
+                                        <option value="false">Disabled</option>
+                                    </select>
+                                    <span class="material-symbols-rounded">
+                                        keyboard_arrow_down
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-control">
+                                <label for="cleanIpScanIntervalHours">Scan Interval (hours)</label>
+                                <div>
+                                    <input type="number" id="cleanIpScanIntervalHours"
+                                        name="cleanIpScanIntervalHours" min="1" max="168">
+                                </div>
+                            </div>
+                            <div class="dashboard-action">
+                                <span id="cleanIpScanStatus">Last scan: never</span>
+                                <button type="button" id="scanCleanIPs" class="button" onclick="scanCleanIPs(this)">
+                                    <span class="material-symbols-rounded">autorenew</span>
+                                    Scan
+                                </button>
                             </div>
                         </div>
                         <div class="form-control">

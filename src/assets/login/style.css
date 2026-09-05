@@ -38,7 +38,8 @@ body {
 }
 
 body {
-    font-family: "Ubuntu", system-ui;
+    font-family: "Vazirmatn", system-ui;
+    direction: rtl;
     position: relative;
     overflow: hidden;
     text-align: center;

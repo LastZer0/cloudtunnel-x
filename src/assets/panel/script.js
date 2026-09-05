@@ -155,6 +155,7 @@ function renderPanel(proxySettings, tgSettings, subscriptions, clients) {
 
     renderPorts(ports.map(Number));
     renderNoises(xrayUdpNoises);
+    renderCleanIpScanner(proxySettings);
     renderSubscriptions(subscriptions);
     renderClients(clients);
 
@@ -173,6 +174,24 @@ function renderPanel(proxySettings, tgSettings, subscriptions, clients) {
             tgForm.elements[key].value = tgSettings[key];
         }
     }
+}
+
+function renderCleanIpScanner(settings) {
+    const status = document.getElementById('cleanIpScanStatus');
+    if (!status) return;
+
+    const results = settings.cleanIpScanResults || [];
+    const lastScan = settings.cleanIpLastScanAt
+        ? new Date(settings.cleanIpLastScanAt).toLocaleString()
+        : 'never';
+    const best = results
+        .slice(0, 3)
+        .map(result => `${result.ip} (${result.avgLatencyMs}ms)`)
+        .join(', ');
+
+    status.textContent = best
+        ? `Last scan: ${lastScan} - ${best}`
+        : `Last scan: ${lastScan}`;
 }
 
 function hasFormDataChanged() {
@@ -578,6 +597,44 @@ function updateSettings(event, data) {
         })
         .catch(error => console.error('Update settings error:', error))
         .finally(() => stopWaiting(icons));
+}
+
+async function scanCleanIPs(btn) {
+    const confirm = await notify('confirm', 'Clean IP scan', [
+        'This scans sampled Cloudflare IPs from inside the Worker and replaces Clean IPs with the 10 best healthy results.',
+        'It can take a few seconds. Continue?'
+    ]);
+
+    if (!confirm) return;
+    const icons = startWaiting(btn, '', 'refresh');
+
+    try {
+        const res = await fetch('./panel/scan-clean-ips', { method: 'POST', credentials: 'include' });
+        const { success, status, message, body } = await res.json();
+
+        if (!success) {
+            throw new Error(`status ${status} - ${message}`);
+        }
+
+        const cleanIPs = document.getElementById('cleanIPs');
+        cleanIPs.value = body.cleanIPs.join('\r\n');
+        cleanIPs.rows = body.cleanIPs.length || 1;
+        renderCleanIpScanner({
+            cleanIpLastScanAt: body.lastRunAt,
+            cleanIpScanResults: body.results
+        });
+        handleProxyFormChanges(true);
+
+        notify('success', 'Clean IP scan', [
+            message || 'Clean IPs updated.',
+            'Apply settings and update subscriptions after reviewing the new list.'
+        ]);
+    } catch (error) {
+        console.error('Clean IP scan error:', error);
+        notify('error', 'Clean IP scan', ['Scan failed. Please try again later.']);
+    } finally {
+        stopWaiting(icons);
+    }
 }
 
 function setupTelegramBot() {

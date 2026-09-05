@@ -15,6 +15,7 @@ const validators = [
     validateLocalDNS,
     validateWarpDNS,
     validateCleanIPs,
+    validateCleanIpScanner,
     validateProxyIPs,
     validateNAT64Prefixes,
     validateWarpEndpoints,
@@ -192,6 +193,16 @@ function validateCleanIPs(form: PanelSettings, errors: ValidationError[]) {
                 'Invalid values are:\n',
                 ...invalids.map(ip => `+ ${ip}`)
             ]
+        });
+    }
+}
+
+function validateCleanIpScanner(form: PanelSettings, errors: ValidationError[]) {
+    const interval = Number(form.cleanIpScanIntervalHours);
+    if (!Number.isInteger(interval) || interval < 1 || interval > 168) {
+        errors.push({
+            field: 'Clean IP Auto Scanner',
+            message: ['Scan interval should be a whole number between 1 and 168 hours.']
         });
     }
 }

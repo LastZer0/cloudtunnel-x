@@ -2,6 +2,7 @@ import { handleDoH } from '@handlers/doh';
 import { renderError } from '@handlers/error';
 import { handleLogin } from '@handlers/login';
 import { handlePanel } from '@handlers/panel';
+import { runScheduledCleanIpScan } from '@handlers/clean-ip-scanner';
 import { handleProxyIPs } from '@handlers/proxy-ip';
 import { generateQRCode } from '@handlers/qrcode';
 import { handleSubscriptions } from '@handlers/subscription';
@@ -46,5 +47,9 @@ export default {
 		} catch (error) {
 			return renderError(error);
 		}
+	},
+
+	async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
+		ctx.waitUntil(runScheduledCleanIpScan(env));
 	}
 }

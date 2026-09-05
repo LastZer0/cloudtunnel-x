@@ -25,6 +25,19 @@ export async function getDataset(env: Env): Promise<{
             warpAccounts = await fetchWarpAccounts(env);
         }
 
+        if (!hasCurrentSettingsShape(settings)) {
+            settings = {
+                ...kvSettings,
+                ...settings,
+                cleanIpAutoScan: settings.cleanIpAutoScan ?? kvSettings.cleanIpAutoScan,
+                cleanIpScanIntervalHours: settings.cleanIpScanIntervalHours ?? kvSettings.cleanIpScanIntervalHours,
+                cleanIpLastScanAt: settings.cleanIpLastScanAt ?? kvSettings.cleanIpLastScanAt,
+                cleanIpScanResults: settings.cleanIpScanResults ?? kvSettings.cleanIpScanResults,
+                panelVersion: settings.panelVersion || VERSION
+            };
+            await env.kv.put('proxySettings', JSON.stringify(settings));
+        }
+
         if (VERSION !== settings.panelVersion) {
             settings = await updateDataset(env);
         }
@@ -44,6 +57,15 @@ export async function getDataset(env: Env): Promise<{
         console.log(error);
         throw new Error(`An error occurred while getting KV: ${safeError(error)}`);
     }
+}
+
+function hasCurrentSettingsShape(settings: Partial<KvSettings>): boolean {
+    return [
+        'cleanIpAutoScan',
+        'cleanIpScanIntervalHours',
+        'cleanIpLastScanAt',
+        'cleanIpScanResults'
+    ].every(key => key in settings);
 }
 
 export async function updateDataset(env: Env, newSettings?: PanelSettings): Promise<KvSettings> {
@@ -99,6 +121,10 @@ export async function updateDataset(env: Env, newSettings?: PanelSettings): Prom
             ['chainProxy'],
             ['chainProxyParams', 'chainProxy', extractProxyParams],
             ['cleanIPs'],
+            ['cleanIpAutoScan'],
+            ['cleanIpScanIntervalHours'],
+            ['cleanIpLastScanAt'],
+            ['cleanIpScanResults'],
             ['customCdnAddrs'],
             ['customCdnHost'],
             ['customCdnSni'],

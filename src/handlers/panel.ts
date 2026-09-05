@@ -11,6 +11,7 @@ import { getGlobals, getMainSettings, subscriptions, clients } from '@settings';
 import { validateSettings } from '@validators';
 import { fallback } from './utils';
 import { setTelegramBot } from '@api/telegram';
+import { handleCleanIpScan } from './clean-ip-scanner';
 
 export async function handlePanel(request: Request, env: Env): Promise<Response> {
     const { pathname } = getGlobals();
@@ -38,6 +39,9 @@ export async function handlePanel(request: Request, env: Env): Promise<Response>
 
         case 'panel/update-warp':
             return updateWarpConfigs(request, env);
+
+        case 'panel/scan-clean-ips':
+            return handleCleanIpScan(request, env);
 
         case 'panel/update-panel':
             return updatePanel(request, env);

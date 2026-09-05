@@ -13,6 +13,10 @@ export interface KvSettings {
     chainProxy: string;
     chainProxyParams: any;
     cleanIPs: string[];
+    cleanIpAutoScan: boolean;
+    cleanIpScanIntervalHours: number;
+    cleanIpLastScanAt: string;
+    cleanIpScanResults: CleanIpScanResult[];
     customCdnAddrs: string[];
     customCdnHost: string;
     customCdnSni: string;
@@ -162,6 +166,13 @@ export interface XrUdpNoise {
     packet: string;
     delay: string;
     count: number;
+}
+
+export interface CleanIpScanResult {
+    ip: string;
+    ok: boolean;
+    successCount: number;
+    avgLatencyMs: number | null;
 }
 
 export interface WarpAccount {
